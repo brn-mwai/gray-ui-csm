@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
 import { AppShell } from "@/components/app-shell"
+import { KusiniDataProvider } from "@/components/kusini/data-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
@@ -15,13 +16,13 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://gray-ui-csm.vercel.app"),
+  metadataBase: new URL("https://kusini.app"),
   title: {
-    default: "Gray CSM UI",
-    template: "%s | Gray CSM UI",
+    default: "Kusini Lodge",
+    template: "%s | Kusini",
   },
   description:
-    "Open-source CSM workspace UI built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.",
+    "Kusini — guest-transfer coordination between remote safari lodges and their airstrips.",
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -39,29 +40,31 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   openGraph: {
-    title: "Gray CSM UI",
+    title: "Kusini Lodge",
     description:
-      "Open-source CSM workspace UI built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.",
-    url: "https://gray-ui-csm.vercel.app",
-    siteName: "Gray CSM UI",
+      "Kusini — guest-transfer coordination between remote safari lodges and their airstrips.",
+    url: "https://kusini.app",
+    siteName: "Kusini",
     type: "website",
     images: [
       {
         url: "/android-chrome-512x512.png",
         width: 512,
         height: 512,
-        alt: "Gray CSM Logo",
+        alt: "Kusini",
       },
     ],
   },
   twitter: {
     card: "summary",
-    title: "Gray CSM UI",
+    title: "Kusini Lodge",
     description:
-      "Open-source CSM workspace UI built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.",
+      "Kusini — guest-transfer coordination between remote safari lodges and their airstrips.",
     images: ["/android-chrome-512x512.png"],
   },
 }
+
+export const dynamic = "force-dynamic"
 
 export const viewport: Viewport = {
   themeColor: "#f59e0b",
@@ -86,7 +89,9 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <TooltipProvider delay={0}>
-            <AppShell>{children}</AppShell>
+            <KusiniDataProvider>
+              <AppShell>{children}</AppShell>
+            </KusiniDataProvider>
           </TooltipProvider>
         </ThemeProvider>
       </body>

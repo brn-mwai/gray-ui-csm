@@ -5,183 +5,89 @@ import { Suspense } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  IconBook,
+  IconBed,
+  IconCalendarEvent,
+  IconCalendarStats,
+  IconChartLine,
+  IconClipboardList,
   IconCommand,
-  IconInbox,
-  IconLock,
-  IconMessage2,
-  IconNotebook,
-  IconSettingsAutomation,
-  IconTicket,
+  IconId,
+  IconMapPin,
+  IconPlane,
+  IconSettings,
   IconUser,
-  IconUsersGroup,
 } from "@tabler/icons-react"
 
-import { TicketSidebarFilters } from "@/components/tickets/ticket-sidebar-filters"
-import { Label } from "@/components/ui/label"
+import { KusiniPagePanel } from "@/components/kusini/page-panel"
+import { MovementSidebarFilters } from "@/components/movements/movement-sidebar-filters"
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
-  SidebarInput,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { Switch } from "@/components/ui/switch"
 
 type SidebarItem = {
   title: string
   url: string
   icon: React.ReactNode
+  blurb: string
 }
 
-type PanelItem = {
-  name: string
-  email: string
-  subject: string
-  date: string
-  teaser: string
+type SidebarSection = {
+  label: string
+  items: SidebarItem[]
 }
 
 const data: {
-  navMain: SidebarItem[]
-  panelBySection: Record<string, PanelItem[]>
+  navSections: SidebarSection[]
 } = {
-  navMain: [
-    { title: "Inbox", url: "/inbox", icon: <IconInbox /> },
-    { title: "Tickets", url: "/tickets", icon: <IconTicket /> },
-    { title: "Customer Profiles", url: "/customers", icon: <IconUser /> },
-    { title: "Accounts", url: "/accounts", icon: <IconUsersGroup /> },
-    { title: "Internal Notes", url: "/internal-notes", icon: <IconNotebook /> },
-    { title: "Knowledge Base", url: "/knowledge-base", icon: <IconBook /> },
-    { title: "Macros", url: "/macros", icon: <IconMessage2 /> },
+  navSections: [
     {
-      title: "Automation Rules",
-      url: "/automation",
-      icon: <IconSettingsAutomation />,
+      label: "Operations",
+      items: [
+        { title: "Movements", url: "/movements", icon: <IconPlane />, blurb: "Post, assign, acknowledge, escalate." },
+        { title: "Bookings", url: "/bookings", icon: <IconCalendarEvent />, blurb: "Every stay, both legs." },
+        { title: "Guests", url: "/guests", icon: <IconUser />, blurb: "Directory and derived needs." },
+      ],
     },
-    { title: "Settings", url: "/settings", icon: <IconLock /> },
+    {
+      label: "Property & workforce",
+      items: [
+        { title: "Duties", url: "/duties", icon: <IconClipboardList />, blurb: "Ground jobs and capacity." },
+        { title: "Rooms", url: "/rooms", icon: <IconBed />, blurb: "Inventory and housekeeping." },
+        { title: "Staff", url: "/staff", icon: <IconId />, blurb: "Roster and reachability." },
+        { title: "Airstrips", url: "/airstrips", icon: <IconMapPin />, blurb: "Conditions and contacts." },
+      ],
+    },
+    {
+      label: "Planning",
+      items: [
+        { title: "Leave planner", url: "/leave-planner", icon: <IconCalendarStats />, blurb: "Leave against the rota." },
+        { title: "Dashboards", url: "/dashboards", icon: <IconChartLine />, blurb: "Coordination health." },
+      ],
+    },
+    {
+      label: "Workspace",
+      items: [{ title: "Settings", url: "/settings", icon: <IconSettings />, blurb: "Windows, channels, roles." }],
+    },
   ],
-  panelBySection: {
-    Inbox: [
-      {
-        name: "Unified channels",
-        email: "ops@workspace.local",
-        subject: "Conversations from all channels",
-        date: "Now",
-        teaser: "Email, chat, in-app, and form messages flow into one queue.",
-      },
-      {
-        name: "Thread statuses",
-        email: "ops@workspace.local",
-        subject: "Triage workflow",
-        date: "Today",
-        teaser:
-          "Filter and triage by New, Open, Pending, Resolved, and Closed states.",
-      },
-    ],
-    Tickets: [
-      {
-        name: "Queue by urgency",
-        email: "tickets@workspace.local",
-        subject: "Prioritize SLA risk",
-        date: "Now",
-        teaser:
-          "Sort by priority and due state to reduce SLA breaches quickly.",
-      },
-      {
-        name: "Escalation handoff",
-        email: "tickets@workspace.local",
-        subject: "Cross-team visibility",
-        date: "Today",
-        teaser:
-          "Escalated tickets remain visible for Product and Engineering follow-up.",
-      },
-    ],
-    "Customer Profiles": [
-      {
-        name: "Customer 360",
-        email: "csm@workspace.local",
-        subject: "Lifecycle context",
-        date: "Today",
-        teaser:
-          "Profile timeline combines support history, sentiment, and value context.",
-      },
-    ],
-    Accounts: [
-      {
-        name: "Account-level signals",
-        email: "accounts@workspace.local",
-        subject: "B2B ownership view",
-        date: "Today",
-        teaser:
-          "Usage, risk, and ownership signals are grouped by account for CSM teams.",
-      },
-    ],
-    "Internal Notes": [
-      {
-        name: "Private collaboration",
-        email: "notes@workspace.local",
-        subject: "Internal-only thread",
-        date: "Today",
-        teaser:
-          "Keep agent-to-agent handoff context private and separate from customer chat.",
-      },
-    ],
-    "Knowledge Base": [
-      {
-        name: "Deflection quality",
-        email: "kb@workspace.local",
-        subject: "Article performance",
-        date: "Today",
-        teaser:
-          "Track which support articles actually reduce ticket inflow over time.",
-      },
-    ],
-    Macros: [
-      {
-        name: "Response templates",
-        email: "macros@workspace.local",
-        subject: "Consistent communication",
-        date: "Today",
-        teaser:
-          "Use one-click macro templates for repetitive requests and policy consistency.",
-      },
-    ],
-    "Automation Rules": [
-      {
-        name: "Auto assign and tag",
-        email: "automation@workspace.local",
-        subject: "Workflow routing",
-        date: "Today",
-        teaser:
-          "Route tickets by plan, language, and intent with rule automation.",
-      },
-    ],
-    Settings: [
-      {
-        name: "SLA configuration",
-        email: "settings@workspace.local",
-        subject: "Workspace policy",
-        date: "Today",
-        teaser:
-          "Define business hours, response targets, and escalation policies globally.",
-      },
-    ],
-  },
 }
+
+const navItems = data.navSections.flatMap((section) => section.items)
 
 function matchByPathname(pathname: string) {
   return (
-    data.navMain.find(
+    navItems.find(
       (item) =>
         pathname === item.url ||
         (item.url !== "/" && pathname.startsWith(`${item.url}/`))
-    ) ?? data.navMain[0]
+    ) ?? navItems[0]
   )
 }
 
@@ -189,18 +95,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
   const { setOpen } = useSidebar()
 
-  const matchedItem = React.useMemo(() => matchByPathname(pathname), [pathname])
-  const [activeItem, setActiveItem] = React.useState(matchedItem)
-  const [panelItems, setPanelItems] = React.useState(
-    data.panelBySection[matchedItem.title] ?? []
-  )
-
-  React.useEffect(() => {
-    setActiveItem(matchedItem)
-    setPanelItems(data.panelBySection[matchedItem.title] ?? [])
-  }, [matchedItem])
-
-  const isTicketsSection = activeItem.title === "Tickets"
+  const activeItem = React.useMemo(() => matchByPathname(pathname), [pathname])
+  const isMovementsSection = activeItem.title === "Movements"
 
   return (
     <Sidebar
@@ -233,93 +129,52 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <IconCommand className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Gray CSM</span>
-                  <span className="truncate text-xs">Workspace</span>
+                  <span className="truncate font-medium">Kusini Lodge</span>
+                  <span className="truncate text-xs">Riverbend</span>
                 </div>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
         <SidebarContent>
-          <SidebarGroup>
-            <SidebarGroupContent className="px-1.5 md:px-0">
-              <SidebarMenu>
-                {data.navMain.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      render={<Link href={item.url} />}
-                      tooltip={{
-                        children: item.title,
-                        hidden: false,
-                      }}
-                      onClick={() => {
-                        setActiveItem(item)
-                        setPanelItems(data.panelBySection[item.title] ?? [])
-                        setOpen(true)
-                      }}
-                      isActive={activeItem.title === item.title}
-                      className="px-2.5 text-muted-foreground data-active:text-sidebar-accent-foreground md:px-2 [&_svg]:text-muted-foreground data-active:[&_svg]:text-sidebar-accent-foreground"
-                    >
-                      {item.icon}
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          {data.navSections.map((section) => (
+            <SidebarGroup key={section.label} aria-label={section.label}>
+              <SidebarGroupContent className="px-1.5 md:px-0">
+                <SidebarMenu>
+                  {section.items.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        render={<Link href={item.url} />}
+                        tooltip={{
+                          children: item.title,
+                          hidden: false,
+                        }}
+                        onClick={() => setOpen(true)}
+                        isActive={activeItem.title === item.title}
+                        className="px-2.5 text-muted-foreground data-active:text-sidebar-accent-foreground md:px-2 [&_svg]:text-muted-foreground data-active:[&_svg]:text-sidebar-accent-foreground"
+                      >
+                        {item.icon}
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
         </SidebarContent>
       </Sidebar>
 
       <Sidebar collapsible="none" className="hidden min-w-0 flex-1 md:flex">
-        {isTicketsSection ? (
-          <SidebarContent>
-            <Suspense fallback={null}>
-              <TicketSidebarFilters />
-            </Suspense>
-          </SidebarContent>
-        ) : (
-          <>
-            <SidebarHeader className="gap-3.5 border-b p-4">
-              <div className="flex w-full items-center justify-between">
-                <div className="text-base font-medium text-foreground">
-                  {activeItem.title}
-                </div>
-                <Label className="flex items-center gap-2 text-sm">
-                  <span>Unreads</span>
-                  <Switch className="shadow-none" />
-                </Label>
-              </div>
-              <SidebarInput placeholder="Type to search..." />
-            </SidebarHeader>
-            <SidebarContent>
-              <SidebarGroup className="px-0">
-                <SidebarGroupContent>
-                  {panelItems.map((item) => (
-                    <a
-                      href="#"
-                      key={`${item.email}-${item.subject}`}
-                      className="flex w-full flex-col items-start gap-2 border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                    >
-                      <div className="flex w-full min-w-0 items-center gap-2">
-                        <span className="truncate">{item.name}</span>
-                        <span className="ml-auto shrink-0 text-xs">
-                          {item.date}
-                        </span>
-                      </div>
-                      <span className="w-full truncate font-medium">
-                        {item.subject}
-                      </span>
-                      <span className="line-clamp-2 w-full text-xs whitespace-break-spaces">
-                        {item.teaser}
-                      </span>
-                    </a>
-                  ))}
-                </SidebarGroupContent>
-              </SidebarGroup>
-            </SidebarContent>
-          </>
-        )}
+        <SidebarContent>
+          <Suspense fallback={null}>
+            {isMovementsSection ? (
+              <MovementSidebarFilters />
+            ) : (
+              <KusiniPagePanel title={activeItem.title} href={activeItem.url} />
+            )}
+          </Suspense>
+        </SidebarContent>
       </Sidebar>
     </Sidebar>
   )

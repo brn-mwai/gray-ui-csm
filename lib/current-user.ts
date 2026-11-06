@@ -1,5 +1,5 @@
 export const currentUser = {
-  name: "Jason Support Lab",
-  email: "support-ops@opensource-demo.dev",
+  name: "Mary Wanjiru",
+  email: "mary@riverbend.camp",
   avatar: "/avatars/avatar-profile.jpg",
 } as const

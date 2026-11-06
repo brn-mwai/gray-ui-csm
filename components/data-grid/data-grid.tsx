@@ -139,9 +139,12 @@ export function DataGrid<Row extends DataGridRowBase, ColumnId extends string>({
   React.useEffect(() => {
     const visibleRowIds = new Set(rows.map((row) => row.id))
 
-    setSelectedRowIds((current) =>
-      current.filter((rowId) => visibleRowIds.has(rowId))
-    )
+    // Keep the same array when nothing was pruned, otherwise every render
+    // produces a new identity and the effect re-fires forever.
+    setSelectedRowIds((current) => {
+      const next = current.filter((rowId) => visibleRowIds.has(rowId))
+      return next.length === current.length ? current : next
+    })
   }, [rows])
 
   const toggleRowSelection = React.useCallback(

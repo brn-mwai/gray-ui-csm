@@ -22,7 +22,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { currentUser } from "@/lib/current-user"
-import { getRouteByPathname } from "@/lib/csm-routes"
+import { getRouteByPathname } from "@/lib/kusini/routes"
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -48,7 +48,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Breadcrumb className="min-w-0">
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <span className="text-muted-foreground">Workspace</span>
+                  <span className="text-muted-foreground">Kusini Lodge</span>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
